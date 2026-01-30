@@ -28,7 +28,7 @@ Commands:
   today                       Show today's notes
   search <query>              Search all memory files
   context                     Generate full system context
-  time                        Show current date and time (Shanghai)
+  time                        Show current date and time
 `;
 
 async function main() {

@@ -18,6 +18,10 @@ LLM agents forget everything between sessions. This gives them persistent memory
 # Install
 npm install
 
+# Copy and configure environment
+cp .env.example .env
+# Edit .env with your API keys and timezone
+
 # Run the demo
 npm run demo
 
@@ -27,6 +31,29 @@ npm run cli -- recall
 
 # Run interactive agent (requires ANTHROPIC_API_KEY)
 npm run agent
+```
+
+## Project Structure
+
+```
+├── docs/
+│   └── ARCHITECTURE.md     # Detailed system design
+├── examples/
+│   ├── demo.ts             # Demo script
+│   └── interactive-agent.ts # Chat agent with memory
+├── src/
+│   ├── cli.ts              # CLI entry point
+│   ├── types.ts            # Shared type definitions
+│   ├── memory/             # Memory layer
+│   │   ├── MemoryManager.ts
+│   │   ├── LongTermMemory.ts
+│   │   └── DailyNotes.ts
+│   ├── session/            # Session handling
+│   │   ├── SessionStore.ts
+│   │   └── Transcript.ts
+│   └── utils/
+├── .claude/                # Claude Code integration
+└── .env.example            # Environment template
 ```
 
 ## Storage Structure
@@ -109,6 +136,8 @@ export const DEFAULT_CONFIG: MemoryConfig = {
 Or pass it programmatically:
 
 ```typescript
+import { MemoryManager } from 'moltbot-inspired-memory';
+
 const memory = new MemoryManager({
   storagePath: '/path/to/storage',
   agentId: 'my-agent',
@@ -132,7 +161,7 @@ The skill triggers on phrases like:
 ## Programmatic Usage
 
 ```typescript
-import { MemoryManager } from './src/index.js';
+import { MemoryManager } from 'moltbot-inspired-memory';
 
 const memory = new MemoryManager({ agentId: 'my-agent' });
 await memory.init();
@@ -154,7 +183,7 @@ const results = await memory.search('TypeScript');
 
 ## Architecture
 
-See [SPEC.md](./SPEC.md) for detailed architecture documentation.
+See [docs/ARCHITECTURE.md](./docs/ARCHITECTURE.md) for detailed system design.
 
 ### Three Memory Layers
 

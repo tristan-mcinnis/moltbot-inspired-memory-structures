@@ -7,10 +7,9 @@
   "scripts": {
     "build": "tsc",
     "start": "node dist/index.js",
-    "dev": "tsx src/index.ts",
-    "demo": "tsx src/demo.ts",
     "cli": "tsx src/cli.ts",
-    "agent": "tsx src/agent.ts"
+    "demo": "tsx examples/demo.ts",
+    "agent": "tsx examples/interactive-agent.ts"
   },
   "keywords": [
     "memory",

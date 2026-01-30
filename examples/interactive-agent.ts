@@ -12,8 +12,8 @@
 
 import Anthropic from '@anthropic-ai/sdk';
 import { createInterface } from 'node:readline';
-import { MemoryManager } from './memory/MemoryManager.js';
-import { freeEncoder } from './utils/tokens.js';
+import { MemoryManager } from '../src/memory/MemoryManager.js';
+import { freeEncoder } from '../src/utils/tokens.js';
 
 const SYSTEM_PROMPT = `You are a helpful assistant with persistent memory.
 

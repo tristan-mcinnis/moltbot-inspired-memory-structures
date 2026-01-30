@@ -9,14 +9,14 @@ import { join } from 'node:path';
 import OpenAI from 'openai';
 import { LongTermMemory } from './LongTermMemory.js';
 import { DailyNotes } from './DailyNotes.js';
-import { SessionStore } from '../sessions/SessionStore.js';
-import { Transcript } from '../sessions/Transcript.js';
+import { SessionStore } from '../session/SessionStore.js';
+import { Transcript } from '../session/Transcript.js';
 import {
   MemoryConfig,
   DEFAULT_CONFIG,
   SearchResult,
   CompactionResult,
-} from './types.js';
+} from '../types.js';
 import { countTokens } from '../utils/tokens.js';
 import { formatDate } from '../utils/markdown.js';
 

@@ -5,8 +5,8 @@
  * Run with reset: npm run demo -- --reset
  */
 
-import { MemoryManager } from './memory/MemoryManager.js';
-import { freeEncoder } from './utils/tokens.js';
+import { MemoryManager } from '../src/memory/MemoryManager.js';
+import { freeEncoder } from '../src/utils/tokens.js';
 import { rm } from 'node:fs/promises';
 import { existsSync } from 'node:fs';
 

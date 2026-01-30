@@ -1,6 +1,6 @@
 ## Memory System
 
-This project provides persistent memory for AI agents. See [SPEC.md](./SPEC.md) for architecture details.
+This project provides persistent memory for AI agents. See [docs/ARCHITECTURE.md](./docs/ARCHITECTURE.md) for details.
 
 ### Quick Commands
 

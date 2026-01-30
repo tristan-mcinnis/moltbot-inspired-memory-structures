@@ -9,7 +9,7 @@ import { open, mkdir } from 'node:fs/promises';
 import { existsSync } from 'node:fs';
 import { dirname } from 'node:path';
 import { randomUUID } from 'node:crypto';
-import { TranscriptEntry } from '../memory/types.js';
+import { TranscriptEntry } from '../types.js';
 import { countTokens } from '../utils/tokens.js';
 
 export interface TranscriptConfig {

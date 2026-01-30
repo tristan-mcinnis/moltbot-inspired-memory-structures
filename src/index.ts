@@ -13,8 +13,8 @@ export { LongTermMemory, type LongTermMemoryConfig } from './memory/LongTermMemo
 export { DailyNotes, type DailyNotesConfig } from './memory/DailyNotes.js';
 
 // Session exports
-export { SessionStore, type SessionStoreConfig } from './sessions/SessionStore.js';
-export { Transcript, type TranscriptConfig } from './sessions/Transcript.js';
+export { SessionStore, type SessionStoreConfig } from './session/SessionStore.js';
+export { Transcript, type TranscriptConfig } from './session/Transcript.js';
 
 // Type exports
 export {
@@ -26,7 +26,7 @@ export {
   SessionMetadata,
   CompactionResult,
   DEFAULT_CONFIG,
-} from './memory/types.js';
+} from './types.js';
 
 // Utility exports
 export {

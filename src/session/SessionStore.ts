@@ -9,7 +9,7 @@ import { readFile, writeFile, mkdir } from 'node:fs/promises';
 import { existsSync } from 'node:fs';
 import { join, dirname } from 'node:path';
 import { randomUUID } from 'node:crypto';
-import { SessionMetadata } from '../memory/types.js';
+import { SessionMetadata } from '../types.js';
 import { Transcript } from './Transcript.js';
 
 export interface SessionStoreConfig {
