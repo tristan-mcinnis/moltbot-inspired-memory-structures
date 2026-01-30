@@ -10,11 +10,20 @@
  *   today                       - Show today's notes
  *   search <query>              - Search all memory
  *   context                     - Full context for prompts
+ *   config                      - Show/edit configuration
+ *   export                      - Export memory to zip file
  */
 
 import 'dotenv/config';
+import { spawn } from 'node:child_process';
 import { MemoryManager } from './memory/MemoryManager.js';
 import { freeEncoder } from './utils/tokens.js';
+import {
+  loadConfig,
+  resetConfig,
+  formatConfig,
+  CONFIG_PATH,
+} from './config.js';
 
 const USAGE = `
 Memory CLI
@@ -29,6 +38,11 @@ Commands:
   search <query>              Search all memory files
   context                     Generate full system context
   time                        Show current date and time
+  config                      Show current configuration
+  config --edit               Open config in $EDITOR
+  config --reset              Reset config to defaults
+  export                      Export memory to zip file
+  export --output <path>      Export to custom location
 `;
 
 async function main() {
@@ -40,8 +54,12 @@ async function main() {
     process.exit(0);
   }
 
+  // Load config from file
+  const config = loadConfig();
+
   const memory = new MemoryManager({
     agentId: 'claude-code',
+    ...config,
   });
 
   try {
@@ -141,7 +159,7 @@ async function main() {
 
       case 'time': {
         const now = new Date();
-        const timezone = process.env.MEMORY_TIMEZONE || 'UTC';
+        const timezone = config.timezone || process.env.MEMORY_TIMEZONE || 'UTC';
         const formatted = now.toLocaleString('en-US', {
           timeZone: timezone,
           weekday: 'long',
@@ -154,6 +172,45 @@ async function main() {
           hour12: false,
         });
         console.log(`${timezone}: ${formatted}`);
+        break;
+      }
+
+      case 'config': {
+        const flag = args[1];
+
+        if (flag === '--edit') {
+          const editor = process.env.EDITOR || 'nano';
+          const child = spawn(editor, [CONFIG_PATH], {
+            stdio: 'inherit',
+          });
+          child.on('exit', (code) => {
+            process.exit(code || 0);
+          });
+          return; // Don't free encoder yet
+        }
+
+        if (flag === '--reset') {
+          resetConfig();
+          console.log(`✓ Config reset to defaults: ${CONFIG_PATH}`);
+          break;
+        }
+
+        // Show current config
+        console.log(formatConfig(config));
+        break;
+      }
+
+      case 'export': {
+        let outputPath = '.';
+
+        // Parse --output flag
+        const outputIdx = args.indexOf('--output');
+        if (outputIdx !== -1 && args[outputIdx + 1]) {
+          outputPath = args[outputIdx + 1];
+        }
+
+        const zipPath = await memory.export(outputPath);
+        console.log(`✓ Exported memory to: ${zipPath}`);
         break;
       }
 

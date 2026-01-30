@@ -13,6 +13,12 @@ export interface MemoryConfig {
   softThresholdTokens: number;
   /** Tokens to keep after compaction */
   keepRecentTokens: number;
+  /** Timezone for timestamps (IANA format, e.g., America/New_York) */
+  timezone: string;
+  /** Date format for daily notes (default: YYYY-MM-DD) */
+  dateFormat: string;
+  /** Memory sections (customizable) */
+  sections: string[];
 }
 
 export interface MemoryEntry {
@@ -68,4 +74,7 @@ export const DEFAULT_CONFIG: MemoryConfig = {
   reserveTokens: 4000,
   softThresholdTokens: 10000,
   keepRecentTokens: 20000,
+  timezone: 'UTC',
+  dateFormat: 'YYYY-MM-DD',
+  sections: ['Preferences', 'People', 'Projects', 'Facts'],
 };

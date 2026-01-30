@@ -12,10 +12,32 @@ LLM agents forget everything between sessions. This gives them persistent memory
 - Three-tier architecture (long-term facts, daily notes, session transcripts)
 - Works with any LLM (Claude, OpenAI, local models)
 
+## Installation
+
+```bash
+# Install globally
+npm install -g moltbot-inspired-memory
+
+# Verify installation
+memory-cli --help
+```
+
+## Update
+
+```bash
+npm update -g moltbot-inspired-memory
+```
+
+## Uninstall
+
+```bash
+npm uninstall -g moltbot-inspired-memory
+```
+
 ## Quick Start
 
 ```bash
-# Install
+# Install dependencies (for development)
 npm install
 
 # Copy and configure environment
@@ -26,8 +48,8 @@ cp .env.example .env
 npm run demo
 
 # Try the CLI
-npm run cli -- remember Preferences "Prefers dark mode"
-npm run cli -- recall
+memory-cli remember Preferences "Prefers dark mode"
+memory-cli recall
 
 # Run interactive agent (requires ANTHROPIC_API_KEY)
 npm run agent
@@ -75,19 +97,28 @@ All data is stored in `~/.memory-test/`:
 
 ```bash
 # Long-term memory
-npm run cli -- remember <section> "<fact>"   # Store a fact
-npm run cli -- recall                        # Show all facts
+memory-cli remember <section> "<fact>"   # Store a fact
+memory-cli recall                        # Show all facts
 
 # Daily notes
-npm run cli -- note "<content>"              # Add a note
-npm run cli -- decide "<decision>"           # Record a decision
-npm run cli -- idea "<idea>"                 # Record an idea
-npm run cli -- today                         # Show today's notes
+memory-cli note "<content>"              # Add a note
+memory-cli decide "<decision>"           # Record a decision
+memory-cli idea "<idea>"                 # Record an idea
+memory-cli today                         # Show today's notes
 
 # Search & utilities
-npm run cli -- search "<query>"              # Search all memory
-npm run cli -- context                       # Full context for LLM
-npm run cli -- time                          # Current date/time
+memory-cli search "<query>"              # Search all memory
+memory-cli context                       # Full context for LLM
+memory-cli time                          # Current date/time
+
+# Configuration
+memory-cli config                        # Show current config
+memory-cli config --edit                 # Open in $EDITOR
+memory-cli config --reset                # Reset to defaults
+
+# Export / Backup
+memory-cli export                        # Create backup zip
+memory-cli export --output ~/backups     # Export to custom path
 ```
 
 ### Sections for Facts
@@ -107,9 +138,46 @@ npm run cli -- remember Projects "api-redesign: Migrating to GraphQL"
 
 ## Configuration
 
+Configuration is stored in `~/.memory-cli/config.yaml` and is created automatically on first run.
+
+```bash
+# View current configuration
+memory-cli config
+
+# Edit configuration in your $EDITOR
+memory-cli config --edit
+
+# Reset to defaults
+memory-cli config --reset
+```
+
+### Config File
+
+```yaml
+# Memory storage location
+storagePath: ~/.memory-test
+
+# Timezone for timestamps (IANA format)
+timezone: America/New_York
+
+# Date format for daily notes
+dateFormat: YYYY-MM-DD
+
+# Memory sections (customizable)
+sections:
+  - Preferences
+  - People
+  - Projects
+  - Facts
+
+# Token limits for compaction
+contextWindow: 100000
+reserveTokens: 4000
+```
+
 ### Environment Variables
 
-Create a `.env` file:
+Create a `.env` file for API keys:
 
 ```bash
 # Required for interactive agent
@@ -117,23 +185,9 @@ ANTHROPIC_API_KEY=sk-ant-...
 
 # Optional: for cost-effective compaction (uses DeepSeek instead of Claude)
 DEEPSEEK_API_KEY=sk-...
-
-# Optional: timezone for the 'time' command (default: UTC)
-MEMORY_TIMEZONE=America/New_York
 ```
 
-### Custom Storage Path
-
-By default, data is stored in `~/.memory-test/`. To change this, modify `DEFAULT_CONFIG` in `src/memory/types.ts`:
-
-```typescript
-export const DEFAULT_CONFIG: MemoryConfig = {
-  storagePath: `${process.env.HOME}/.my-custom-path`,
-  // ...
-};
-```
-
-Or pass it programmatically:
+### Programmatic Configuration
 
 ```typescript
 import { MemoryManager } from 'moltbot-inspired-memory';
@@ -141,7 +195,47 @@ import { MemoryManager } from 'moltbot-inspired-memory';
 const memory = new MemoryManager({
   storagePath: '/path/to/storage',
   agentId: 'my-agent',
+  timezone: 'America/New_York',
 });
+```
+
+## Export / Backup
+
+Export your memory to a zip archive for backup or transfer:
+
+```bash
+# Export to current directory
+memory-cli export
+# Creates: memory-export-2026-01-30.zip
+
+# Export to specific location
+memory-cli export --output ~/backups
+```
+
+The export includes all `.md` files from your storage directory (MEMORY.md and daily notes). Session transcripts (JSONL files) are not included by default.
+
+## Using with Other AI Tools
+
+You can use this memory system with other AI coding tools like Cursor, Windsurf, or Copilot. Add the following to your system prompt or custom instructions:
+
+```
+You have access to a persistent memory system via the memory-cli command.
+
+To remember facts about the user:
+  memory-cli remember <section> "<fact>"
+  Sections: Preferences, People, Projects, Facts
+
+To recall stored memories:
+  memory-cli recall
+
+To add daily notes:
+  memory-cli note "<content>"
+  memory-cli decide "<decision>"
+
+To get full context:
+  memory-cli context
+
+Use these commands proactively to remember user preferences and provide personalized assistance.
 ```
 
 ## Claude Code Integration

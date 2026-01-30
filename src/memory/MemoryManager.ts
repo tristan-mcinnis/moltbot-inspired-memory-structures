@@ -5,7 +5,10 @@
  * compaction, and search functionality.
  */
 
-import { join } from 'node:path';
+import { join, basename } from 'node:path';
+import { createWriteStream } from 'node:fs';
+import { readdir, stat } from 'node:fs/promises';
+import archiver from 'archiver';
 import OpenAI from 'openai';
 import { LongTermMemory } from './LongTermMemory.js';
 import { DailyNotes } from './DailyNotes.js';
@@ -476,5 +479,67 @@ export class MemoryManager {
       dailyNotes: this.dailyNotes,
       sessionStore: this.sessionStore,
     };
+  }
+
+  /**
+   * Export all memory files to a zip archive
+   * @param outputPath Directory to write the zip file (defaults to current directory)
+   * @returns Path to the created zip file
+   */
+  async export(outputPath: string = '.'): Promise<string> {
+    await this.init();
+
+    // Generate filename with date
+    const date = new Date().toISOString().split('T')[0];
+    const filename = `memory-export-${date}.zip`;
+    const fullPath = join(outputPath, filename);
+
+    return new Promise(async (resolve, reject) => {
+      const output = createWriteStream(fullPath);
+      const archive = archiver('zip', { zlib: { level: 9 } });
+
+      output.on('close', () => {
+        resolve(fullPath);
+      });
+
+      archive.on('error', (err) => {
+        reject(err);
+      });
+
+      archive.pipe(output);
+
+      // Add all .md files from storage
+      await this.addFilesToArchive(archive, this.config.storagePath, '');
+
+      await archive.finalize();
+    });
+  }
+
+  /**
+   * Recursively add .md files to archive
+   */
+  private async addFilesToArchive(
+    archive: archiver.Archiver,
+    dir: string,
+    prefix: string
+  ): Promise<void> {
+    try {
+      const entries = await readdir(dir, { withFileTypes: true });
+
+      for (const entry of entries) {
+        const fullPath = join(dir, entry.name);
+        const archivePath = prefix ? `${prefix}/${entry.name}` : entry.name;
+
+        if (entry.isDirectory()) {
+          // Skip agents directory (session data)
+          if (entry.name === 'agents') continue;
+          await this.addFilesToArchive(archive, fullPath, archivePath);
+        } else if (entry.name.endsWith('.md')) {
+          archive.file(fullPath, { name: archivePath });
+        }
+      }
+    } catch {
+      // Directory doesn't exist, skip
+    }
   }
 }
