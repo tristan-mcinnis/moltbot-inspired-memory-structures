@@ -67,11 +67,11 @@ Structured sections for different fact types:
 - Uses VS Code as primary editor
 
 ## People
-- Wife: Lingzi
-- Dog: Max (golden retriever)
+- Colleague: Alex (works on backend)
+- Manager: Jordan
 
 ## Projects
-- memory-test: Exploring local memory for agents
+- memory-system: Local memory for AI agents
 
 ## Facts
 ```
@@ -177,7 +177,7 @@ For use by Claude Code or other CLI agents:
 ```bash
 # Remember facts
 npm run cli -- remember Preferences "Prefers tabs over spaces"
-npm run cli -- remember People "Dog: Max, a golden retriever"
+npm run cli -- remember People "Colleague: Sam (frontend dev)"
 
 # Add notes
 npm run cli -- note "Started working on authentication"
@@ -274,6 +274,7 @@ export const DEFAULT_CONFIG: MemoryConfig = {
 Environment variables:
 - `ANTHROPIC_API_KEY`: For interactive agent
 - `DEEPSEEK_API_KEY`: For cost-effective compaction
+- `MEMORY_TIMEZONE`: Timezone for `time` command (default: UTC)
 
 ---
 
@@ -305,8 +306,7 @@ Environment variables:
 ### Current Limitations
 
 1. **No automatic context loading**: Agent must call `recall`/`today` at session start
-2. **Timezone hardcoded**: `time` command shows Shanghai time only
-3. **Search is literal**: No fuzzy matching or semantic search
+2. **Search is literal**: No fuzzy matching or semantic search
 4. **Session resumption untested**: `resumeSession()` exists but not exposed via CLI
 5. **No data cleanup**: Old daily notes accumulate indefinitely
 6. **Single agent assumption**: CLI uses hardcoded `agentId: 'claude-code'`

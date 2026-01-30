@@ -141,8 +141,9 @@ async function main() {
 
       case 'time': {
         const now = new Date();
-        const shanghai = now.toLocaleString('en-US', {
-          timeZone: 'Asia/Shanghai',
+        const timezone = process.env.MEMORY_TIMEZONE || 'UTC';
+        const formatted = now.toLocaleString('en-US', {
+          timeZone: timezone,
           weekday: 'long',
           year: 'numeric',
           month: 'long',
@@ -152,7 +153,7 @@ async function main() {
           second: '2-digit',
           hour12: false,
         });
-        console.log(`Shanghai: ${shanghai}`);
+        console.log(`${timezone}: ${formatted}`);
         break;
       }
 

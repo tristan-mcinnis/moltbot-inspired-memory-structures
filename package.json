@@ -1,7 +1,7 @@
 {
-  "name": "memory-test",
-  "version": "1.0.0",
-  "description": "Local memory storage system for agents",
+  "name": "moltbot-inspired-memory",
+  "version": "0.1.0",
+  "description": "Local markdown-based memory system for AI agents, inspired by moltbot",
   "main": "dist/index.js",
   "type": "module",
   "scripts": {
@@ -15,10 +15,14 @@
   "keywords": [
     "memory",
     "agent",
-    "llm"
+    "llm",
+    "claude",
+    "ai",
+    "markdown",
+    "local-first"
   ],
-  "author": "",
-  "license": "ISC",
+  "author": "Tristan McInnis",
+  "license": "MIT",
   "dependencies": {
     "@anthropic-ai/sdk": "^0.32.0",
     "dotenv": "^17.2.3",

@@ -41,8 +41,8 @@ async function main() {
   const facts = [
     { section: 'Preferences', fact: 'Prefers TypeScript over JavaScript' },
     { section: 'Preferences', fact: 'Uses VS Code as primary editor' },
-    { section: 'People', fact: 'Wife: Lingzi' },
-    { section: 'Projects', fact: 'memory-test: Exploring local memory for agents' },
+    { section: 'People', fact: 'Colleague: Alex (works on backend)' },
+    { section: 'Projects', fact: 'memory-system: Local memory for AI agents' },
   ];
 
   let added = 0;

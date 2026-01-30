@@ -1,23 +1,16 @@
-## Memory System Active
+## Memory System
 
-This project has a persistent memory system. **Always use the memory skill**.
+This project provides persistent memory for AI agents. See [SPEC.md](./SPEC.md) for architecture details.
 
-**At session start or when asked about previous conversations:**
+### Quick Commands
+
 ```bash
-npm run cli -- today    # Check today's notes first
-npm run cli -- recall   # Then check long-term memory
-```
-
-**When user mentions personal info or asks you to remember:**
-```bash
+npm run cli -- recall           # Show long-term memory
+npm run cli -- today            # Show today's notes
 npm run cli -- remember <section> "<fact>"
-npm run cli -- note "<what happened>"
+npm run cli -- note "<content>"
 ```
 
----
+### Inspiration
 
-## Project Context
-
-We were helping Tristan explore different ways to do local memory storage for agents.
-
-It's inspired heavily by the Moltbot repository: https://github.com/moltbot/moltbot
+Based on [moltbot](https://github.com/moltbot/moltbot).

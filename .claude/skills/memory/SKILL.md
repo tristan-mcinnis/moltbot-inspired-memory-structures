@@ -24,7 +24,7 @@ Sections: `Preferences`, `People`, `Projects`, `Facts`
 
 Example:
 ```bash
-npm run cli -- remember People "Dog: Max, a golden retriever"
+npm run cli -- remember People "Colleague: Alex (backend dev)"
 ```
 
 ### Recall all facts
