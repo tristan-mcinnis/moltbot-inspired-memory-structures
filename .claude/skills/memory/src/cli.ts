@@ -30,6 +30,7 @@ Memory CLI
 
 Commands:
   remember <section> <fact>   Store a fact (sections: Preferences, People, Projects, Facts)
+  forget <section> <fact>     Remove a fact from memory
   note <content>              Add to today's session notes
   decide <content>            Record a decision made
   idea <content>              Record an idea
@@ -79,6 +80,23 @@ async function main() {
           console.log(`✓ Stored in ${section}: "${fact}"`);
         } else {
           console.log(`Already known: "${fact}"`);
+        }
+        break;
+      }
+
+      case 'forget': {
+        const section = args[1];
+        const fact = args.slice(2).join(' ');
+        if (!section || !fact) {
+          console.error('Usage: forget <section> <fact>');
+          console.error('Sections: Preferences, People, Projects, Facts');
+          process.exit(1);
+        }
+        const removed = await memory.removeFact(section, fact);
+        if (removed) {
+          console.log(`✓ Removed from ${section}: "${fact}"`);
+        } else {
+          console.log(`Not found in ${section}: "${fact}"`);
         }
         break;
       }

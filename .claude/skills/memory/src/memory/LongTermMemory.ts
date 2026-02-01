@@ -184,6 +184,50 @@ export class LongTermMemory {
   }
 
   /**
+   * Remove a fact from a specific section
+   * @returns true if fact was found and removed, false if not found
+   */
+  async removeFact(section: string, fact: string): Promise<boolean> {
+    const content = await this.read();
+    const normalizedFact = fact.trim().toLowerCase();
+
+    const lines = content.split('\n');
+    let inTargetSection = false;
+    let removed = false;
+
+    const newLines: string[] = [];
+
+    for (let i = 0; i < lines.length; i++) {
+      const line = lines[i];
+      const sectionMatch = line.match(/^##\s+(.+)$/);
+
+      if (sectionMatch) {
+        inTargetSection = sectionMatch[1].trim() === section;
+        newLines.push(line);
+        continue;
+      }
+
+      if (inTargetSection && line.match(/^\s*[-*+]\s*/)) {
+        const bulletContent = line.replace(/^\s*[-*+]\s*/, '').trim().toLowerCase();
+        if (bulletContent === normalizedFact || line.includes(fact)) {
+          removed = true;
+          continue; // Skip this line (remove it)
+        }
+      }
+
+      newLines.push(line);
+    }
+
+    if (removed) {
+      const newContent = newLines.join('\n');
+      await writeFile(this.filePath, newContent, 'utf-8');
+      this.cache = newContent;
+    }
+
+    return removed;
+  }
+
+  /**
    * Clear the cache (force re-read on next access)
    */
   clearCache(): void {

@@ -7,6 +7,13 @@ description: "Persistent memory system. Use when user asks: remember, recall, wh
 
 You have access to a persistent memory system stored in `~/.memory-test/`. Use it to remember facts about the user and record session notes.
 
+## Setup (First Time Only)
+
+If this skill was just copied into the project, run:
+```bash
+cd .claude/skills/memory && npm install
+```
+
 ## Storage Structure
 
 - `MEMORY.md` - Long-term facts (preferences, people, projects)
@@ -14,7 +21,14 @@ You have access to a persistent memory system stored in `~/.memory-test/`. Use i
 
 ## Commands
 
-All commands run from the project root:
+All commands run from the skill directory (`.claude/skills/memory/`):
+
+```bash
+cd .claude/skills/memory
+npm run cli -- remember People "Fact here"
+```
+
+Or from project root with full path:
 
 ### Remember a fact
 ```bash
@@ -25,6 +39,16 @@ Sections: `Preferences`, `People`, `Projects`, `Facts`
 Example:
 ```bash
 npm run cli -- remember People "Colleague: Alex (backend dev)"
+```
+
+### Forget a fact
+```bash
+npm run cli -- forget <section> "<fact>"
+```
+
+Example:
+```bash
+npm run cli -- forget People "Dog: Max (golden retriever)"
 ```
 
 ### Recall all facts
@@ -79,6 +103,9 @@ npm run cli -- time
 - User asks about past conversations
 - Context would help the current task
 
+**Correct mistakes** when:
+- User says information is wrong (use `forget` then `remember`)
+
 ## Examples
 
 User: "I prefer tabs over spaces"
@@ -95,3 +122,6 @@ User: "What did we talk about last time?" or "What happened earlier?"
 
 User: "Did I mention anything about X?"
 → Run: `npm run cli -- search "X"`
+
+User: "I don't have a dog named Max"
+→ Run: `npm run cli -- forget People "Dog: Max (golden retriever)"`

@@ -2,350 +2,62 @@
 
 A local, markdown-based memory system for AI agents. Inspired by [moltbot](https://github.com/moltbot/moltbot).
 
-## Why?
-
 LLM agents forget everything between sessions. This gives them persistent memory without cloud dependencies or API costs for storage.
-
-**Key features:**
-- Plain markdown files (human-readable, git-friendly)
-- Local-first (no cloud, no API costs)
-- Three-tier architecture (long-term facts, daily notes, session transcripts)
-- Works with any LLM (Claude, OpenAI, local models)
-
-## Installation
-
-```bash
-# Install globally
-npm install -g moltbot-inspired-memory
-
-# Verify installation
-memory-cli --help
-```
-
-## Update
-
-```bash
-npm update -g moltbot-inspired-memory
-```
-
-## Uninstall
-
-```bash
-npm uninstall -g moltbot-inspired-memory
-```
 
 ## Quick Start
 
+**Copy the skill** into your Claude Code project:
+
 ```bash
-# Install dependencies (for development)
+cp -r .claude/skills/memory /path/to/your/project/.claude/skills/
+cd /path/to/your/project/.claude/skills/memory
 npm install
-
-# Copy and configure environment
-cp .env.example .env
-# Edit .env with your API keys and timezone
-
-# Run the demo
-npm run demo
-
-# Try the CLI
-memory-cli remember Preferences "Prefers dark mode"
-memory-cli recall
-
-# Run interactive agent (requires ANTHROPIC_API_KEY)
-npm run agent
 ```
 
-## Project Structure
+**Start using it:**
 
-```
-├── docs/
-│   └── ARCHITECTURE.md     # Detailed system design
-├── examples/
-│   ├── demo.ts             # Demo script
-│   └── interactive-agent.ts # Chat agent with memory
-├── src/
-│   ├── cli.ts              # CLI entry point
-│   ├── types.ts            # Shared type definitions
-│   ├── memory/             # Memory layer
-│   │   ├── MemoryManager.ts
-│   │   ├── LongTermMemory.ts
-│   │   └── DailyNotes.ts
-│   ├── session/            # Session handling
-│   │   ├── SessionStore.ts
-│   │   └── Transcript.ts
-│   └── utils/
-├── .claude/                # Claude Code integration
-└── .env.example            # Environment template
+```bash
+npm run cli -- remember People "My name is Claude"
+npm run cli -- recall
 ```
 
-## Storage Structure
+## What's Included
+
+The skill lives in `.claude/skills/memory/` and contains everything needed:
+- Full TypeScript source code
+- CLI for remembering/recalling facts
+- Self-contained (no dependencies on root project)
+
+## Features
+
+- **Plain markdown files** - Human-readable, git-friendly
+- **Local-first** - No cloud, no API costs for storage
+- **Three-tier memory** - Long-term facts, daily notes, session transcripts
+- **Works with any LLM** - Claude, OpenAI, local models
+
+## Storage
 
 All data is stored in `~/.memory-test/`:
+- `MEMORY.md` - Long-term facts (permanent)
+- `memory/YYYY-MM-DD.md` - Daily notes (ephemeral)
+- `agents/{agent-id}/sessions/` - Session transcripts
 
-```
-~/.memory-test/
-├── MEMORY.md              # Long-term facts (permanent)
-├── memory/
-│   └── 2026-01-30.md      # Daily notes (ephemeral)
-└── agents/
-    └── {agent-id}/
-        └── sessions/
-            └── {uuid}.jsonl  # Conversation transcripts
-```
+## Documentation
 
-## CLI Commands
+- **Skill Usage**: See `.claude/skills/memory/README.md`
+- **Architecture**: See [docs/ARCHITECTURE.md](./docs/ARCHITECTURE.md)
 
-```bash
-# Long-term memory
-memory-cli remember <section> "<fact>"   # Store a fact
-memory-cli recall                        # Show all facts
+## How It Works
 
-# Daily notes
-memory-cli note "<content>"              # Add a note
-memory-cli decide "<decision>"           # Record a decision
-memory-cli idea "<idea>"                 # Record an idea
-memory-cli today                         # Show today's notes
+Once installed, Claude Code will automatically:
+- Remember facts when you mention personal info
+- Recall context when starting new sessions
+- Store decisions, ideas, and notes in daily logs
 
-# Search & utilities
-memory-cli search "<query>"              # Search all memory
-memory-cli context                       # Full context for LLM
-memory-cli time                          # Current date/time
-
-# Configuration
-memory-cli config                        # Show current config
-memory-cli config --edit                 # Open in $EDITOR
-memory-cli config --reset                # Reset to defaults
-
-# Export / Backup
-memory-cli export                        # Create backup zip
-memory-cli export --output ~/backups     # Export to custom path
-```
-
-### Sections for Facts
-
-When using `remember`, use one of these sections:
-- `Preferences` - User preferences (editor, language, style)
-- `People` - People the user mentions (colleagues, family)
-- `Projects` - Projects being worked on
-- `Facts` - Other facts worth remembering
-
-Example:
-```bash
-npm run cli -- remember Preferences "Uses vim keybindings"
-npm run cli -- remember People "Manager: Jordan (approves PRs)"
-npm run cli -- remember Projects "api-redesign: Migrating to GraphQL"
-```
-
-## Configuration
-
-Configuration is stored in `~/.memory-cli/config.yaml` and is created automatically on first run.
-
-```bash
-# View current configuration
-memory-cli config
-
-# Edit configuration in your $EDITOR
-memory-cli config --edit
-
-# Reset to defaults
-memory-cli config --reset
-```
-
-### Config File
-
-```yaml
-# Memory storage location
-storagePath: ~/.memory-test
-
-# Timezone for timestamps (IANA format)
-timezone: America/New_York
-
-# Date format for daily notes
-dateFormat: YYYY-MM-DD
-
-# Memory sections (customizable)
-sections:
-  - Preferences
-  - People
-  - Projects
-  - Facts
-
-# Token limits for compaction
-contextWindow: 100000
-reserveTokens: 4000
-```
-
-### Environment Variables
-
-Create a `.env` file for API keys:
-
-```bash
-# Required for interactive agent
-ANTHROPIC_API_KEY=sk-ant-...
-
-# Optional: for cost-effective compaction (uses DeepSeek instead of Claude)
-DEEPSEEK_API_KEY=sk-...
-```
-
-### Programmatic Configuration
-
-```typescript
-import { MemoryManager } from 'moltbot-inspired-memory';
-
-const memory = new MemoryManager({
-  storagePath: '/path/to/storage',
-  agentId: 'my-agent',
-  timezone: 'America/New_York',
-});
-```
-
-## Export / Backup
-
-Export your memory to a zip archive for backup or transfer:
-
-```bash
-# Export to current directory
-memory-cli export
-# Creates: memory-export-2026-01-30.zip
-
-# Export to specific location
-memory-cli export --output ~/backups
-```
-
-The export includes all `.md` files from your storage directory (MEMORY.md and daily notes). Session transcripts (JSONL files) are not included by default.
-
-## Using with Other AI Tools
-
-You can use this memory system with other AI coding tools like Cursor, Windsurf, or Copilot. Add the following to your system prompt or custom instructions:
-
-```
-You have access to a persistent memory system via the memory-cli command.
-
-To remember facts about the user:
-  memory-cli remember <section> "<fact>"
-  Sections: Preferences, People, Projects, Facts
-
-To recall stored memories:
-  memory-cli recall
-
-To add daily notes:
-  memory-cli note "<content>"
-  memory-cli decide "<decision>"
-
-To get full context:
-  memory-cli context
-
-Use these commands proactively to remember user preferences and provide personalized assistance.
-```
-
-## Claude Code Integration
-
-This project includes a skill for [Claude Code](https://claude.ai/claude-code). The skill teaches Claude how to use the memory CLI.
-
-To use it:
-1. Clone this repo
-2. Open the project in Claude Code
-3. Claude will automatically use the memory commands when appropriate
-
-The skill triggers on phrases like:
-- "remember that..."
-- "what do you know about me?"
-- "what did we talk about?"
-
-## Programmatic Usage
-
-```typescript
-import { MemoryManager } from 'moltbot-inspired-memory';
-
-const memory = new MemoryManager({ agentId: 'my-agent' });
-await memory.init();
-
-// Store facts
-await memory.addFact('Preferences', 'Likes TypeScript');
-
-// Add daily notes
-await memory.addDailyNote('Started new project');
-await memory.addDecision('Using PostgreSQL for database');
-
-// Get context for LLM prompts
-const context = await memory.getSystemContext();
-// Returns: long-term memory + today's notes + yesterday's notes
-
-// Search
-const results = await memory.search('TypeScript');
-```
-
-## Architecture
-
-See [docs/ARCHITECTURE.md](./docs/ARCHITECTURE.md) for detailed system design.
-
-### Three Memory Layers
-
-| Layer | File | Purpose | Lifespan |
-|-------|------|---------|----------|
-| Long-term | `MEMORY.md` | Curated facts | Permanent |
-| Daily | `memory/YYYY-MM-DD.md` | Session notes | Days/weeks |
-| Session | `sessions/*.jsonl` | Conversation log | Until compacted |
-
-### Compaction
-
-When sessions get too long, older messages are summarized (using DeepSeek for cost efficiency) and replaced with a compact summary. This keeps context within LLM token limits.
-
-## Example Memory Files
-
-### MEMORY.md
-```markdown
-# Long-Term Memory
-
-## Preferences
-- Prefers TypeScript over JavaScript
-- Uses VS Code with vim keybindings
-- Likes dark mode
-
-## People
-- Colleague: Alex (backend developer)
-- Manager: Jordan (approves PRs on Fridays)
-
-## Projects
-- api-redesign: Migrating REST to GraphQL
-- mobile-app: React Native rewrite
-
-## Facts
-- Works remotely, based in NYC timezone
-```
-
-### Daily Notes (memory/2026-01-30.md)
-```markdown
-# 2026-01-30
-
-## Session Notes
-- [09:15] Started working on authentication refactor
-- [14:30] Debugged OAuth callback issue
-
-## Decisions Made
-- [10:00] Using JWT with 1-hour expiry
-- [16:00] Postponing mobile app work until next sprint
-
-## Ideas
-- [11:30] Could add rate limiting middleware
-
-## Tasks
-- [09:00] Review Alex's PR for user service
-```
-
-## Development
-
-```bash
-# Build
-npm run build
-
-# Run TypeScript directly
-npm run dev
-
-# Run demo
-npm run demo
-npm run demo -- --reset  # Reset and start fresh
-```
+Trigger phrases:
+- "Remember that I..."
+- "What do you know about me?"
+- "What did we talk about?"
 
 ## License
 

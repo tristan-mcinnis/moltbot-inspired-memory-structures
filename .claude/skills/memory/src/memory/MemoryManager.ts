@@ -135,6 +135,15 @@ export class MemoryManager {
   }
 
   /**
+   * Remove a fact from long-term memory
+   * @returns true if fact was found and removed, false if not found
+   */
+  async removeFact(section: string, fact: string): Promise<boolean> {
+    await this.init();
+    return this.longTermMemory.removeFact(section, fact);
+  }
+
+  /**
    * Get long-term memory contents
    */
   async getLongTermMemory(): Promise<string> {
